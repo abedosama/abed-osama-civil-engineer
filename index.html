@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Abed Osama — Civil Engineer</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#f2f2f7;color:#111;
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial;
+}
+header{
+ position:sticky;top:0;z-index:5;background:white;
+ padding:14px 16px;border-bottom:1px solid #ddd;
+ display:flex;justify-content:space-between;align-items:center;
+}
+.brand{color:#007aff;font-weight:800}
+button{
+ border:0;border-radius:10px;padding:11px 15px;
+ background:#007aff;color:white;font-weight:700;
+ cursor:pointer;margin:3px;
+}
+button:active{transform:scale(.97)}
+.lang button{background:#eee;color:#111;padding:7px}
+.lang .active{background:#007aff;color:white}
+.container{max-width:850px;margin:auto;padding:16px}
+.hero{
+ background:linear-gradient(135deg,#007aff,#0051d5);
+ color:white;padding:28px;border-radius:20px;margin-bottom:16px;
+}
+.card{
+ background:white;padding:18px;border-radius:18px;
+ margin-bottom:16px;box-shadow:0 2px 10px #0001;
+}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.project{
+ border:1px solid #ddd;border-radius:12px;
+ padding:13px;margin:9px 0;cursor:pointer;
+}
+.project:hover{background:#f7faff}
+input{
+ width:100%;padding:12px;border:1px solid #ddd;
+ border-radius:10px;font-size:16px;margin:5px 0 12px;
+}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.result{
+ background:#f5f9ff;border:1px solid #d8eaff;
+ padding:14px;border-radius:12px;margin-top:12px;
+}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px}
+.stat{background:#f5f5f7;padding:12px;text-align:center;border-radius:12px}
+.stat strong{display:block;font-size:20px}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th,td{padding:9px;border-bottom:1px solid #ddd;text-align:right}
+.modal{
+ display:none;position:fixed;inset:0;background:#0008;
+ align-items:center;justify-content:center;padding:20px;
+}
+.modal.show{display:flex}
+.modalbox{
+ background:white;padding:25px;border-radius:20px;
+ width:100%;max-width:400px;text-align:center;
+}
+.orange{background:#ff9500}
+.green{background:#34c759}
+.red{background:#ff3b30}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="brand">Civil Engineer — Abed Osama</div>
+<div class="lang">
+<button id="ar" class="active" onclick="language('ar')">AR</button>
+<button id="en" onclick="language('en')">EN</button>
+<button id="fr" onclick="language('fr')">FR</button>
+</div>
+</header>
+
+<div class="container">
+
+<section class="hero">
+<h1 id="title">منصة هندسية احترافية</h1>
+<p id="subtitle">
+إدارة المشاريع وحساب الخرسانة والتكاليف في مكان واحد.
+</p>
+</section>
+
+<section class="card">
+
+<div class="row">
+<h2 id="projectsTitle">المشاريع</h2>
+<button onclick="newProject()" id="newBtn">+ مشروع جديد</button>
+</div>
+
+<div id="projects"></div>
+
+<div class="stats">
+<div class="stat">
+<strong id="projectCount">0</strong>
+<span>المشاريع</span>
+</div>
+<div class="stat">
+<strong id="calcCount">0</strong>
+<span>الحسابات</span>
+</div>
+<div class="stat">
+<strong>$99.99</strong>
+<span>Premium</span>
+</div>
+</div>
+
+</section>
+
+<section class="card">
+
+<div class="row">
+<div>
+<h2 id="currentName">فيلا أحمد</h2>
+<small id="status">FREE PROJECT</small>
+</div>
+
+<button class="red" onclick="window.print()">📄 PDF</button>
+</div>
+
+<h3 id="calcTitle">حاسبة حجم الخرسانة</h3>
+
+<div class="grid">
+
+<div>
+<label>الطول (م)</label>
+<input id="length" type="number" value="10">
+</div>
+
+<div>
+<label>العرض (م)</label>
+<input id="width" type="number" value="5">
+</div>
+
+<div>
+<label>السمك (م)</label>
+<input id="depth" type="number" value="0.20">
+</div>
+
+<div>
+<label>الهالك (%)</label>
+<input id="waste" type="number" value="5">
+</div>
+
+</div>
+
+<label>السعر / م³ ($)</label>
+<input id="price" type="number" value="80">
+
+<button class="green" style="width:100%" onclick="calculate()">
+احسب واحفظ
+</button>
+
+<div class="result">
+<div class="row">
+<span>الحجم</span>
+<strong id="volume">0.00 m³</strong>
+</div>
+
+<div class="row">
+<span>التكلفة</span>
+<strong id="cost">$0.00</strong>
+</div>
+</div>
+
+<h3>الحسابات المحفوظة</h3>
+
+<table>
+<thead>
+<tr>
+<th>البند</th>
+<th>الكمية</th>
+<th>التكلفة</th>
+</tr>
+</thead>
+<tbody id="records"></tbody>
+</table>
+
+</section>
+
+<section class="card">
+
+<h2>Premium</h2>
+
+<p>
+المشروع الأول مجاني. يمكنك تجربة إنشاء مشاريع Premium
+بدون دفع أموال حقيقية.
+</p>
+
+<button class="orange" onclick="newProject()">
+تجربة Premium — $99.99
+</button>
+
+</section>
+
+</div>
+
+<div class="modal" id="modal">
+
+<div class="modalbox">
+
+<h2>مشروع Premium</h2>
+
+<p>
+هذه عملية تجريبية فقط، ولن يتم خصم أي أموال.
+</p>
+
+<h1 style="color:#007aff">$99.99</h1>
+
+<button class="green" onclick="createProject()">
+✓ إنشاء المشروع
+</button>
+
+<button onclick="closeModal()">
+إلغاء
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+let projects=JSON.parse(
+ localStorage.getItem("abedProjects")||"null"
+)||[
+ {
+  id:1,
+  name:"فيلا أحمد",
+  paid:false,
+  records:[
+   {
+    item:"خرسانة البلاطة",
+    quantity:"10.50 m³",
+    cost:"$840.00"
+   }
+  ]
+ }
+];
+
+let current=1;
+
+function save(){
+ localStorage.setItem(
+  "abedProjects",
+  JSON.stringify(projects)
+ );
+}
+
+function render(){
+
+ let box=document.getElementById("projects");
+
+ box.innerHTML=projects.map(p=>`
+ <div class="project"
+      onclick="openProject(${p.id})">
+
+  <strong>${escape(p.name)}</strong>
+
+  <br>
+
+  <small>
+  ${p.paid?"PREMIUM":"FREE"}
+  · ${p.records.length} calculations
+  </small>
+
+ </div>
+ `).join("");
+
+ document.getElementById("projectCount")
+ .textContent=projects.length;
+
+ document.getElementById("calcCount")
+ .textContent=projects.reduce(
+  (a,p)=>a+p.records.length,0
+ );
+
+ renderCurrent();
+
+}
+
+function renderCurrent(){
+
+ let p=projects.find(x=>x.id===current);
+
+ if(!p)return;
+
+ document.getElementById("currentName")
+ .textContent=p.name;
+
+ document.getElementById("status")
+ .textContent=p.paid
+ ?"PREMIUM PROJECT"
+ :"FREE PROJECT";
+
+ document.getElementById("records")
+ .innerHTML=p.records.map(r=>`
+ <tr>
+ <td>${escape(r.item)}</td>
+ <td>${r.quantity}</td>
+ <td>${r.cost}</td>
+ </tr>
+ `).join("");
+
+}
+
+function openProject(id){
+
+ current=id;
+ renderCurrent();
+
+ window.scrollTo({
+  top:document.querySelectorAll(".card")[1].offsetTop-60,
+  behavior:"smooth"
+ });
+
+}
+
+function newProject(){
+ document.getElementById("modal")
+ .classList.add("show");
+}
+
+function closeModal(){
+ document.getElementById("modal")
+ .classList.remove("show");
+}
+
+function createProject(){
+
+ let name=prompt("اسم المشروع الجديد:");
+
+ if(!name)return;
+
+ projects.push({
+  id:Date.now(),
+  name:name,
+  paid:true,
+  records:[]
+ });
+
+ current=projects[projects.length-1].id;
+
+ save();
+ closeModal();
+ render();
+
+ alert("تم إنشاء المشروع بنجاح — Demo");
+}
+
+function calculate(){
+
+ let l=Number(document.getElementById("length").value);
+ let w=Number(document.getElementById("width").value);
+ let d=Number(document.getElementById("depth").value);
+ let waste=Number(document.getElementById("waste").value);
+ let price=Number(document.getElementById("price").value);
+
+ let volume=l*w*d*(1+waste/100);
+ let cost=volume*price;
+
+ document.getElementById("volume")
+ .textContent=volume.toFixed(2)+" m³";
+
+ document.getElementById("cost")
+ .textContent="$"+cost.toFixed(2);
+
+ let p=projects.find(x=>x.id===current);
+
+ p.records.push({
+  item:`Concrete ${l} × ${w} × ${d} m`,
+  quantity:volume.toFixed(2)+" m³",
+  cost:"$"+cost.toFixed(2)
+ });
+
+ save();
+ render();
+
+ alert("تم حفظ الحساب بنجاح");
+
+}
+
+function language(l){
+
+ document.getElementById("ar").classList.remove("active");
+ document.getElementById("en").classList.remove("active");
+ document.getElementById("fr").classList.remove("active");
+
+ document.getElementById(l).classList.add("active");
+
+ if(l==="en"){
+
+  document.documentElement.dir="ltr";
+
+  document.getElementById("title").textContent=
+  "Professional Civil Engineering Platform";
+
+  document.getElementById("subtitle").textContent=
+  "Manage projects, calculate concrete quantities and costs.";
+
+  document.getElementById("projectsTitle").textContent="Projects";
+  document.getElementById("newBtn").textContent="+ New Project";
+  document.getElementById("calcTitle").textContent=
+  "Concrete Volume Calculator";
+
+ }
+
+ else if(l==="fr"){
+
+  document.documentElement.dir="ltr";
+
+  document.getElementById("title").textContent=
+  "Plateforme professionnelle de génie civil";
+
+  document.getElementById("subtitle").textContent=
+  "Gérez vos projets et calculez les quantités et les coûts.";
+
+  document.getElementById("projectsTitle").textContent="Projets";
+  document.getElementById("newBtn").textContent="+ Nouveau projet";
+  document.getElementById("calcTitle").textContent=
+  "Calculateur de volume de béton";
+
+ }
+
+ else{
+
+  document.documentElement.dir="rtl";
+
+  document.getElementById("title").textContent=
+  "منصة هندسية احترافية";
+
+  document.getElementById("subtitle").textContent=
+  "إدارة المشاريع وحساب الخرسانة والتكاليف في مكان واحد.";
+
+  document.getElementById("projectsTitle").textContent="المشاريع";
+  document.getElementById("newBtn").textContent="+ مشروع جديد";
+  document.getElementById("calcTitle").textContent=
+  "حاسبة حجم الخرسانة";
+
+ }
+
+}
+
+function escape(s){
+
+ return String(s)
+ .replaceAll("&","&amp;")
+ .replaceAll("<","&lt;")
+ .replaceAll(">","&gt;")
+ .replaceAll('"',"&quot;")
+ .replaceAll("'","&#039;");
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>
